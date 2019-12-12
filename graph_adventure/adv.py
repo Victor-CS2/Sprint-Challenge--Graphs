@@ -40,7 +40,7 @@ while len(visited) < 500: # While the visited is less than number of rooms...
     # if the unexplored list of exits is not empty...
     if len(unexplored_exits) > 0:
         last_room = player.currentRoom.id
-        direction = unexplored_exits[0] # we set the first direction within the unexplored exit array as our traversing direction
+        direction = unexplored_exits[random.randint(0, len(unexplored_exits) - 1)] # we set the first direction within the unexplored exit array as our traversing direction
         player.travel(direction) # player goes to the direction
         traversalPath.append(direction) # add the direction as a traversed path
         path.append(direction) # add the direction to the path
