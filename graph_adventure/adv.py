@@ -17,11 +17,53 @@ roomGraph={494: [(1, 8), {'e': 457}], 492: [(1, 20), {'e': 400}], 493: [(2, 5), 
 
 world.loadGraph(roomGraph)
 world.printRooms()
-player = Player("Name", world.startingRoom)
 
+
+player = Player("Victor", world.startingRoom)
 
 # FILL THIS IN
-traversalPath = ['n', 's']
+traversalPath = []
+visited = {0: {"n": "?", "e": "?", "s": "?", "w": "?"} } #starting graph
+path = []
+flipped_directions = { "n": "s", "s": "n", "e": "w", "w":"e" }
+
+while len(visited) < 500: # While the visited is less than number of rooms...
+    # set the exit for the current visited rooms
+    current_exits = visited[player.currentRoom.id]
+
+    unexplored_exits = [] # unexplored exits
+    for exit in player.currentRoom.getExits(): # For exit in the list of exits for the current room
+        if current_exits[exit] == '?' : # checks if the exit within the current room is a "?"
+            # add the exit onto the unexplored list
+            unexplored_exits.append(exit) # since its not a set, use .append()
+    
+    # if the unexplored list of exits is not empty...
+    if len(unexplored_exits) > 0:
+        last_room = player.currentRoom.id
+        direction = unexplored_exits[random.randint(0, len(unexplored_exits) - 1)] # we set the first direction within the unexplored exit array as our traversing direction
+        player.travel(direction) # player goes to the direction
+        traversalPath.append(direction) # add the direction as a traversed path
+        path.append(direction) # add the direction to the path
+        entered_room = player.currentRoom.id # current room is now set as the entered room.
+
+        if entered_room not in visited: # we need to make an if statement to
+            entered_room_exits = {} # create a dict for the exits for the entered room
+            for exit in player.currentRoom.getExits(): # for exit in the current room
+                entered_room_exits[exit] = '?'
+            visited[entered_room] = entered_room_exits
+
+        visited[last_room][direction] = entered_room
+        visited[entered_room][flipped_directions[direction]] = last_room # last room need to have the directions flipped of the entered room so you can traverse backwards
+
+    else:
+        if len(path) > 0: # if the path is not empty
+            prev_direction = path.pop() # pop the previous direction
+            # flip the direction of the previous direction and traverse back
+            go_back = flipped_directions[prev_direction]
+            player.travel(go_back) # player goes back
+            # the back is appended to the traversal path
+            traversalPath.append(go_back)
+
 
 
 # TRAVERSAL TEST
